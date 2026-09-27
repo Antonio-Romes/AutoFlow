@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AutoFlowApplication<auto_flow>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.br.auto_flow.AutoFlowApplication",
+            "projectName": "auto_flow",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-autoflow}
+      POSTGRES_USER: ${POSTGRES_USER:-autoflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-autoflow}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  java:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-autoflow}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-autoflow}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-autoflow}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${HIBERNATE_DDL_AUTO:-update}
+      JWT_PRIVATE_KEY_PATH: /run/secrets/autoflow-jwt/jwt-private.pem
+      JWT_PUBLIC_KEY_PATH: /run/secrets/autoflow-jwt/jwt-public.pem
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+    volumes:
+      - ./api/keys:/run/secrets/autoflow-jwt:ro
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+volumes:
+  postgres_data:
