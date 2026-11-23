@@ -1,6 +1,6 @@
-package com.br.auto_flow.infrastructure.persitence.repository.user;
+package com.br.auto_flow.infrastructure.persistence.repository.user;
 
-import com.br.auto_flow.infrastructure.persitence.entity.user.UserEntity;
+import com.br.auto_flow.infrastructure.persistence.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
-package com.br.auto_flow.infrastructure.persitence.repository.auth;
+package com.br.auto_flow.infrastructure.persistence.repository.auth;
 
-import com.br.auto_flow.infrastructure.persitence.entity.auth.RefreshTokenEntity;
+import com.br.auto_flow.infrastructure.persistence.entity.auth.RefreshTokenEntity;
 import jakarta.persistence.LockModeType;
 import java.time.Instant;
 import java.util.Optional;

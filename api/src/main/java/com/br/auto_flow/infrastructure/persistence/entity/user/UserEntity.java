@@ -1,4 +1,4 @@
-package com.br.auto_flow.infrastructure.persitence.entity.user;
+package com.br.auto_flow.infrastructure.persistence.entity.user;
 
 import com.br.auto_flow.domain.models.enums.Role;
 import lombok.Getter;

@@ -3,14 +3,33 @@ package com.br.auto_flow.presentation.exception;
 import com.br.auto_flow.application.usecase.user.RegisterUserUseCase.UserAlreadyRegisteredException;
 import com.br.auto_flow.domain.exception.DomainException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(
+            MethodArgumentNotValidException exception, HttpServletRequest request) {
+        Map<String, String> errors = new LinkedHashMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error ->
+                errors.putIfAbsent(error.getField(), error.getDefaultMessage()));
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message("Um ou mais campos são inválidos")
+                .path(request.getRequestURI())
+                .errors(errors)
+                .build();
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @ExceptionHandler(UserAlreadyRegisteredException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateUser(
             UserAlreadyRegisteredException exception, HttpServletRequest request) {

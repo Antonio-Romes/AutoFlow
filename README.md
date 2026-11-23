@@ -157,6 +157,14 @@ O arquivo [api/src/main/resources/application.properties](api/src/main/resources
 spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/autoflow}
 ```
 
+### Migrations do banco
+
+O schema é gerenciado pelo Flyway. As migrations ficam em `api/src/main/resources/db/migration` e são executadas automaticamente na inicialização da API. O Hibernate usa `validate` para conferir o schema sem alterá-lo automaticamente.
+
+Para criar tabelas ou alterar as existentes, adicione uma migration com o próximo número, por exemplo `V2__add_vehicle_table.sql`. Se o banco de desenvolvimento já tiver tabelas criadas antes da ativação do Flyway, remova essas tabelas antes da primeira inicialização; a migration `V1` criará o schema inicial.
+
+As regras de autorização iniciais mantêm cadastro e autenticação públicos, exigem autenticação nas demais rotas e reservam `/api/admin/**` para usuários com papel `ADMIN`.
+
 Isso significa:
 
 - se a variável `SPRING_DATASOURCE_URL` estiver definida, ela será usada;

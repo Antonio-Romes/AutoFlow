@@ -1,4 +1,4 @@
-package com.br.auto_flow.infrastructure.persitence.entity.auth;
+package com.br.auto_flow.infrastructure.persistence.entity.auth;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
