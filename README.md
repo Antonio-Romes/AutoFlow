@@ -23,8 +23,12 @@ AutoFlow/
 │  │  └─ test/
 │  ├─ pom.xml
 │  └─ Dockerfile
-├─ app/
-│  └─ (aplicação frontend / cliente da API)
+├─ web/
+│  ├─ src/app/core/          # autenticação e infraestrutura global
+│  ├─ src/app/shared/        # componentes e utilitários reutilizáveis
+│  ├─ src/app/features/      # telas e fluxos por área do produto
+│  ├─ Dockerfile             # build estático para produção
+│  └─ Dockerfile.dev         # servidor Angular para desenvolvimento
 ├─ docker-compose.yml
 ├─ README.md
 └─ ...
@@ -92,6 +96,7 @@ Essa estratégia melhora a experiência do usuário, mantendo a sessão segura e
 - Lombok
 - MapStruct
 - Docker / Docker Compose
+- Angular 22 / TypeScript
 
 ## Execução local
 
@@ -100,6 +105,8 @@ Essa estratégia melhora a experiência do usuário, mantendo a sessão segura e
 ```bash
 docker compose up --build -d
 ```
+
+O front-end fica disponível em `http://localhost:4200` (altere com `WEB_PORT`). Durante o desenvolvimento, o Angular encaminha `/api` para a API no serviço `java`. Para compilar o front-end localmente, use `cd web && npm ci && npm run build`. O `web/Dockerfile` produz a imagem de produção servida pelo Nginx; o Compose usa `web/Dockerfile.dev` para habilitar recarga durante o desenvolvimento.
 
 ### Sem Docker
 
@@ -161,9 +168,16 @@ spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/au
 
 O schema é gerenciado pelo Flyway. As migrations ficam em `api/src/main/resources/db/migration` e são executadas automaticamente na inicialização da API. O Hibernate usa `validate` para conferir o schema sem alterá-lo automaticamente.
 
-Para criar tabelas ou alterar as existentes, adicione uma migration com o próximo número, por exemplo `V2__add_vehicle_table.sql`. Se o banco de desenvolvimento já tiver tabelas criadas antes da ativação do Flyway, remova essas tabelas antes da primeira inicialização; a migration `V1` criará o schema inicial.
+Para criar tabelas ou alterar as existentes, adicione uma migration com o próximo número, por exemplo `V3__add_vehicle_table.sql`. Se o banco de desenvolvimento já tiver tabelas criadas antes da ativação do Flyway, remova essas tabelas antes da primeira inicialização; a migration `V1` criará o schema inicial.
 
 As regras de autorização iniciais mantêm cadastro e autenticação públicos, exigem autenticação nas demais rotas e reservam `/api/admin/**` para usuários com papel `ADMIN`.
+
+A migration `V2` cria a conta administrativa inicial para configurar o sistema:
+
+- E-mail: `admin@autoflow.local`
+- Senha inicial: `AutoFlow@Admin2026!`
+
+Como a aplicação ainda não tem fluxo de troca de senha, atualize a senha no banco usando um hash BCrypt antes de disponibilizar o ambiente fora do desenvolvimento local.
 
 Isso significa:
 
