@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/services/auth.service';
 
 @Component({
@@ -56,6 +57,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class LoginPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   readonly loading = signal(false);
   readonly error = signal('');
   readonly success = signal('');
@@ -75,7 +77,7 @@ export class LoginPageComponent {
     this.auth.login(this.form.getRawValue()).subscribe({
       next: () => {
         this.loading.set(false);
-        this.success.set('Login realizado. O painel da oficina será conectado na próxima etapa.');
+        void this.router.navigate(['/dashboard']);
       },
       error: (response: HttpErrorResponse) => {
         this.loading.set(false);
